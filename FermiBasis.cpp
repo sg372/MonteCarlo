@@ -10,7 +10,8 @@ FermiBasis::FermiBasis(int ss, int ps) {
 	particles = ps;
 	sites = ss;
 
-	if (particles > sites) {
+    //Check the system is physical
+	if (particles > sites || particles < 1 || sites <1) {
 		cout<< "Error: FermiBasis: more fermions than sites" << endl << endl;
 		throw "Error: more sites than particles";
 	}
@@ -22,6 +23,8 @@ FermiBasis::FermiBasis(int ss, int ps) {
 }
 
 int FermiBasis::getBasisSize(int ss, int ps) {
+    
+    //Calculate [ss Choose ps] in a stable way:
 	if (ps > ss)
 		return 0;
 	if (ps * 2 > ss)
@@ -39,28 +42,38 @@ int FermiBasis::getBasisSize(int ss, int ps) {
 
 void FermiBasis::populateBasisStates(void) {
 
-	int p[particles];
+	int p[particles]; //Contains the positions of the particles
 
+    //Initialise particles on the left of the lattice
 	for (int i = 0; i < particles; ++i) {
 		p[i] = i;
 	}
 
 	for (int j = 0; j < basisSize; ++j) {
+
 		for (int i = 0; i < particles; ++i) {
-			basis(j, p[i]) = 1;
+            //Put particles in basis state j
+			basis(j, p[i]) = 1; 
 		}
 
-		int breaker = 0;
-		int shift = 0;
+        //To determine if the particle can be iterated no further
+		int breaker = 0; 
+
+        /* To identify the next particle to moved, up to the leftmost
+         * particle, with shift=0 being the rightmost particle.*/
+		int shift = 0;   
+
 		while (breaker == 0 && shift < particles) {
 			if (p[particles - shift - 1] < sites - shift - 1) {
 				p[particles - shift - 1] = p[particles - shift - 1] + 1;
 				for (int i = 0; i < shift; i++) {
 					p[particles - shift + i] = p[particles - shift + i - 1] + 1;
 				}
-				breaker = 1;
+				breaker = 1; //particle can move no further
 			}
-			shift += 1;
+            /* take the particle to the left and repeat until it is next to the
+             * last particle */
+			shift += 1; 
 
 		}
 
@@ -68,6 +81,7 @@ void FermiBasis::populateBasisStates(void) {
 
 }
 
+//Print the integers corresponding to the state stateIndex
 void FermiBasis::printBasisState(int stateIndex) {
 
 	cout<< basis.row(stateIndex) << endl;

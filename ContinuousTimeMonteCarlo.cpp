@@ -135,7 +135,7 @@ jumpStates.push_back(state);
 }
 
 
-
+//Write data to file with gnuplot-commented header lines
 void ContinuousTimeMonteCarlo::writeToFile(std::string fname){
 
 std::ofstream file (fname);
@@ -167,7 +167,7 @@ file.close();
 
 
 
-
+//Read in a previously written out dataset
 void ContinuousTimeMonteCarlo::readFromFile(std::string fname){
 
 char dummyhash;

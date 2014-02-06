@@ -11,7 +11,7 @@
  * lived steady states, but I haven't implemented this yet.)
  * 
  * Constructor input parameters are:
- * double s_val :  to be implemented later for "s-biased master equations.
+ * double s_val [OPTIONAL] :  to be implemented later for "s-biased master equations.
  * double cs : coupling strength between Hamiltonian system and bath.
  * int ss : number of sites in quantum sys (passed to Hamiltonian constructor).
  * int ps : number of fermions < ss on the lattice (passed to Hamiltonian).
@@ -38,7 +38,7 @@ class Liouvillian : public Hamiltonian
 
 public:
 
-Liouvillian(double, double, int, int, double, double);
+Liouvillian(double, int, int, double, double, double s_val=0.0);
 
 DoubleMatrix W;
 

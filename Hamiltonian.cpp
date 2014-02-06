@@ -24,6 +24,10 @@ Hamiltonian::Hamiltonian(int ss, int ps, double J, double dis) :
 
 }
 
+
+/* Member function to print to stdout internal matrices for
+inspection and return model parameters including the generated
+disorder realisation across the lattice */
 void Hamiltonian::printHMatrix() {
 	//Check that matrix is small (and so readily inspected)
 	if (basisSize < 40) {
@@ -54,8 +58,9 @@ DoubleVector Hamiltonian::getOnSiteEnergies() {
 	return onSiteEnergies;
 }
 
-
-//Note that the lattice has periodic boundary conditions
+/* Make matrix of sites x sites which describes topology 
+ * of the lattice with periodic boundary conditions and 
+ * has magnitude = hopping integral */
 void Hamiltonian::makeJMatrix() {
 	for (int i = 0; i < sites - 1; ++i) {
 		JMatrix(i, i + 1) = hoppingIntegral;
@@ -66,6 +71,8 @@ void Hamiltonian::makeJMatrix() {
 
 }
 
+/* Populate DoubleVector of random on-site energies from 
+ * Gaussian with std dev = disorderStrength */
 void Hamiltonian::makeOnSiteEnergies() {
 
 	std::default_random_engine generator(std::time(0));
@@ -76,6 +83,9 @@ void Hamiltonian::makeOnSiteEnergies() {
 	}
 }
 
+/* Populate elements of basisSize x basisSize Hamiltonian
+ * matrix using the specified hopping matrix elements and
+ * the generated on-site energies */
 void Hamiltonian::makeHamiltonian() {
 
 	for (int i = 0; i < basisSize; ++i) {
@@ -84,7 +94,8 @@ void Hamiltonian::makeHamiltonian() {
 			int breaker = 0;
 			int match[3] = { 0 };
 
-			while (breaker < 3 && s < sites) {
+            //Check for two differences between states so that a hop can occur
+			while (breaker < 3 && s < sites) { 
 				if (basis(i, s) != basis(j, s)) {
 					match[breaker] = s;
 					breaker += 1;
@@ -92,11 +103,14 @@ void Hamiltonian::makeHamiltonian() {
 				s += 1;
 			}
 
+            //Populate elements if a flip can occur (two differences in states)
 			if (s == sites && breaker == 2) {
 
+                //Check that we are moving a particle from a hole
 				if (basis(i, match[0]) == 0 && basis(i, match[1]) == 1
 						&& basis(j, match[0]) == 1 && basis(j, match[1]) == 0) {
 
+                    //Count positions to preserve Fermi commutation relations
 					int sum1 = 0;
 					for (int m = 0; m < match[1]; ++m) {
 						sum1 = sum1 + basis(i, m);
@@ -111,6 +125,8 @@ void Hamiltonian::makeHamiltonian() {
 
 					HMatrix(i, j) = HMatrix(i, j)
 							+ JMatrix(match[0], match[1]) * sgn;
+
+                //Repeat for moving a particle TO a hole
 				} else if (basis(i, match[0]) == 1 && basis(i, match[1]) == 0
 						&& basis(j, match[0]) == 0 && basis(j, match[1]) == 1) {
 
@@ -134,6 +150,7 @@ void Hamiltonian::makeHamiltonian() {
 		}
 	}
 
+    // Add diagonal disorder energies 
 	for (int i = 0; i < basisSize; ++i) {
 		for (int k = 0; k < sites; ++k) {
 			if (basis(i, k) == 1) {

@@ -8,8 +8,8 @@
 #define endl std::endl
 
 
-Liouvillian::Liouvillian(double s_val, double cs, int ss, int ps,
-		double J, double dis) :
+Liouvillian::Liouvillian(double cs, int ss, int ps,
+		double J, double dis, double s_val) :
 		Hamiltonian(ss, ps, J, dis) {
 
 	s = s_val;
