@@ -9,25 +9,32 @@ class Hamiltonian : public FermiBasis
 
 public:
 
-Hamiltonian(unsigned, unsigned, double, double, double);
+Hamiltonian(int, int, double, double);
 
-double hoppingIntegral;
-double interactionStrength;
-double disorderStrength;
 
-double getOnSiteEnergy(unsigned);
+
+double getOnSiteEnergy(int);
+
+DoubleVector getOnSiteEnergies();
+
+double getHoppingIntegral();
+
+double getDisorderStrength();
 
 void printHMatrix();
 
 void printJMatrix();
 
-DoubleMatrix HMatrix;
 
 private:
 
 DoubleMatrix JMatrix;
+
 DoubleVector onSiteEnergies;
 
+double hoppingIntegral;
+
+double disorderStrength;
 
 void makeJMatrix();
 
@@ -37,6 +44,7 @@ void makeHamiltonian();
 
 protected:
 
+DoubleMatrix HMatrix;
 
 
 };

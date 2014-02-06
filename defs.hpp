@@ -1,3 +1,9 @@
+/* Definitions for types used.  In particular, typenames for matrix
+ * objects in the eigen package v3 for matrices and linear algebra are
+ * defined here.  See http://eigen.tuxfamily.org/ for details.
+ */
+
+
 
 #ifndef DEFS_HPP_
 #define DEFS_HPP_
@@ -10,7 +16,7 @@ using namespace Eigen;
 #define complex std::complex<double>
 
 //Definition of the matrix type using eigen
-typedef Matrix<unsigned, Dynamic, Dynamic> UnsignedMatrix;
+typedef Matrix<int, Dynamic, Dynamic> intMatrix;
 
 typedef Matrix<double, Dynamic, Dynamic> DoubleMatrix;
 

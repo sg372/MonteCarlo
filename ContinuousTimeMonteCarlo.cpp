@@ -4,6 +4,7 @@
 #include <iterator>
 #include <fstream>
 #include <string>
+#include <ctime>
 
 #include "ContinuousTimeMonteCarlo.hpp"
 
@@ -15,8 +16,8 @@
 
 
 //Constructor to perform a fixed number of time steps
-ContinuousTimeMonteCarlo::ContinuousTimeMonteCarlo(unsigned lS,
-    unsigned tS, Liouvillian * stochasticMatrix)
+ContinuousTimeMonteCarlo::ContinuousTimeMonteCarlo(int lS,
+    int tS, Liouvillian * stochasticMatrix)
 {
 
     initialState = lS;
@@ -28,11 +29,11 @@ ContinuousTimeMonteCarlo::ContinuousTimeMonteCarlo(unsigned lS,
     this->W = &stochasticMatrix->W;
     
     //Perform required number of time steps
-    for (unsigned j=0; j<timeSteps; ++j){
+    for (int j=0; j<timeSteps; ++j){
         try{
             timeStep();
         }
-        catch (unsigned error) {
+        catch (int error) {
             cout << "Error: state " << error << " is disconnected never jump";
             cout << " and will never jump" << endl;
             break;
@@ -43,7 +44,7 @@ ContinuousTimeMonteCarlo::ContinuousTimeMonteCarlo(unsigned lS,
 
 
 //Constructor to iterate until a desired time has been reached
-ContinuousTimeMonteCarlo::ContinuousTimeMonteCarlo(unsigned lS,
+ContinuousTimeMonteCarlo::ContinuousTimeMonteCarlo(int lS,
     double mT, Liouvillian * stochasticMatrix)
 {
 
@@ -60,7 +61,7 @@ ContinuousTimeMonteCarlo::ContinuousTimeMonteCarlo(unsigned lS,
         try{
             timeStep();
         }
-        catch (unsigned error) {
+        catch (int error) {
             cout << "Error: state " << error << " is disconnected never jump";
             cout << " and will never jump" << endl;
             break;
@@ -87,18 +88,19 @@ ContinuousTimeMonteCarlo::ContinuousTimeMonteCarlo(std::string fname)
 
 /* Perform a single time step and add the time and new state
  * to the stored values jumpTimes and jumpStates.
- * This routine will throw an unsigned int corresponding to an
- * infinitely lived state, should one be prepared initially */
+ * This routine will throw an int int corresponding to an
+ * infinitely-lived state, should one be prepared initially */
 void ContinuousTimeMonteCarlo::timeStep()
 {
-static std::default_random_engine generator;
+//static std::mt19937 generator(std::time(0));
+static std::default_random_engine generator(std::time(0));
 static std::uniform_real_distribution<double> flatDistribution(0.0,1.0);
 
 std::vector<double> cumul(basisSize);	//table of cumulative rates 
 
     double cu=0.0;      //for cumulative probability weight
     
-    for (unsigned i=0; i<basisSize; ++i){
+    for (int i=0; i<basisSize; ++i){
 	    if(i != state){
 	        cu += (*W)(i,state);
 	        cumul[i] = cu;
@@ -146,7 +148,7 @@ if (file.is_open() ){
 
 
     std::vector<double>::iterator itT = jumpTimes.begin();
-    std::vector<unsigned>::iterator itS = jumpStates.begin();
+    std::vector<int>::iterator itS = jumpStates.begin();
 
     for ( ; itT < jumpTimes.end(), itS < jumpStates.end(); ++itT, ++itS){
 
@@ -169,7 +171,7 @@ file.close();
 void ContinuousTimeMonteCarlo::readFromFile(std::string fname){
 
 char dummyhash;
-unsigned sizeOfVectors;
+int sizeOfVectors;
 std::string checkstring;
 std::ifstream file (fname);
 
@@ -187,7 +189,7 @@ if (file.is_open() ){
         jumpStates.resize(sizeOfVectors);
         
         std::vector<double>::iterator itT = jumpTimes.begin();
-        std::vector<unsigned>::iterator itS = jumpStates.begin();
+        std::vector<int>::iterator itS = jumpStates.begin();
 
         for ( ; itT < jumpTimes.end(), itS < jumpStates.end(); ++itT, ++itS){
 

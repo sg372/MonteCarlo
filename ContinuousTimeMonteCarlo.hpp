@@ -10,21 +10,21 @@ class ContinuousTimeMonteCarlo
 
 public:
 
-ContinuousTimeMonteCarlo(unsigned, unsigned, Liouvillian *);
+ContinuousTimeMonteCarlo(int, int, Liouvillian *);
 
-ContinuousTimeMonteCarlo(unsigned, double, Liouvillian *);
+ContinuousTimeMonteCarlo(int, double, Liouvillian *);
 
 ContinuousTimeMonteCarlo(std::string);
 
-unsigned initialState;
-unsigned timeSteps;
+int initialState;
+int timeSteps;
 double maxTime;
 
-unsigned basisSize;
+int basisSize;
 
 
 std::vector<double> jumpTimes;
-std::vector<unsigned> jumpStates;
+std::vector<int> jumpStates;
 
 
 void writeToFile(std::string);
@@ -38,7 +38,7 @@ void timeStep();
 
 
 double time;
-unsigned state;
+int state;
 
 void readFromFile(std::string);
 

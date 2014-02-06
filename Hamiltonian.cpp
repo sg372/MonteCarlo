@@ -1,17 +1,16 @@
 #include <iostream>
 #include <random>
+#include <ctime>
 #include "Hamiltonian.hpp"
 
 #define cerr std::cerr
 #define cout std::cout
 #define endl std::endl 
 
-Hamiltonian::Hamiltonian(unsigned ss, unsigned ps, double J, double V,
-		double dis) :
+Hamiltonian::Hamiltonian(int ss, int ps, double J, double dis) :
 		FermiBasis(ss, ps) {
 
 	hoppingIntegral = J;
-	interactionStrength = V;
 	disorderStrength = dis;
 
 	onSiteEnergies = DoubleVector::Zero(sites);
@@ -39,11 +38,24 @@ void Hamiltonian::printJMatrix() {
 	cout<< JMatrix << endl;
 }
 
-double Hamiltonian::getOnSiteEnergy(unsigned site) {
+double Hamiltonian::getOnSiteEnergy(int site) {
 	return onSiteEnergies(site);
 }
 
-//Currently with periodic boundary conditions
+double Hamiltonian::getHoppingIntegral(){
+    return hoppingIntegral;
+}
+
+double Hamiltonian::getDisorderStrength(){
+    return disorderStrength;
+}
+
+DoubleVector Hamiltonian::getOnSiteEnergies() {
+	return onSiteEnergies;
+}
+
+
+//Note that the lattice has periodic boundary conditions
 void Hamiltonian::makeJMatrix() {
 	for (int i = 0; i < sites - 1; ++i) {
 		JMatrix(i, i + 1) = hoppingIntegral;
@@ -56,7 +68,7 @@ void Hamiltonian::makeJMatrix() {
 
 void Hamiltonian::makeOnSiteEnergies() {
 
-	std::default_random_engine generator;
+	std::default_random_engine generator(std::time(0));
 	std::normal_distribution<double> distribution(0.0, disorderStrength);
 
 	for (int i = 0; i < sites; ++i) {
@@ -68,9 +80,9 @@ void Hamiltonian::makeHamiltonian() {
 
 	for (int i = 0; i < basisSize; ++i) {
 		for (int j = 0; j < basisSize; ++j) {
-			unsigned s = 0;
-			unsigned breaker = 0;
-			unsigned match[3] = { 0 };
+			int s = 0;
+			int breaker = 0;
+			int match[3] = { 0 };
 
 			while (breaker < 3 && s < sites) {
 				if (basis(i, s) != basis(j, s)) {
@@ -129,6 +141,7 @@ void Hamiltonian::makeHamiltonian() {
 			}
 		}
 	}
+
 
 }
 

@@ -10,25 +10,25 @@ class FermiBasis
 public:
 
 //parameters defining the physical system
-unsigned particles;
-unsigned sites;
-unsigned basisSize;
+int particles;
+int sites;
+int basisSize;
 
 //Matrix of basis states
-UnsignedMatrix basis;
+intMatrix basis;
 
 
 //Constructor
-FermiBasis(unsigned, unsigned);
+FermiBasis(int, int);
 
 
 //Print out a basis state
-void printBasisState(unsigned);
+void printBasisState(int);
 
 private:
 
 //Function to get basis size for system
-unsigned getBasisSize(unsigned, unsigned);
+int getBasisSize(int, int);
 
 //Create basis states in basis matrix
 void populateBasisStates(void);

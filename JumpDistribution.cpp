@@ -7,7 +7,7 @@
 #define endl std::endl
 
 
-JumpDistribution::JumpDistribution(double intv, unsigned bs,
+JumpDistribution::JumpDistribution(double intv, int bs,
     double r1, double r2,  ContinuousTimeMonteCarlo * MC)
 {
  
@@ -28,7 +28,7 @@ binWidth = (range[1]-range[0])/bins;
 midPointValues.resize(bins);
 frequency.resize(bins);
 
-for (unsigned i=0; i<bins; ++i){
+for (int i=0; i<bins; ++i){
    midPointValues[i] = range[0] + (i+0.5)*binWidth;
 }
 
@@ -42,12 +42,12 @@ makeDistribution();
 void JumpDistribution::makeDistribution(){
 
 double time = interval;
-unsigned jump = 0;
+int jump = 0;
 
 while (time < MonteCarloObjectPtr->jumpTimes.back() &&
     jump < MonteCarloObjectPtr->jumpTimes.size()){
 
-    unsigned jumps = 0;
+    int jumps = 0;
 
     while (MonteCarloObjectPtr->jumpTimes[jump] < time){
             jumps += 1;
@@ -59,7 +59,7 @@ while (time < MonteCarloObjectPtr->jumpTimes.back() &&
     int bin = static_cast<int> (jumps - range[0])/binWidth;
 
     if (bin < bins && bin >=0){
-        frequency[bin] += jumps;
+        frequency[bin] += 1;
     }
 }
 

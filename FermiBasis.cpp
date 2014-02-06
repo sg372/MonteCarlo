@@ -5,7 +5,7 @@
 #define cout std::cout
 #define endl std::endl 
 
-FermiBasis::FermiBasis(unsigned ss, unsigned ps) {
+FermiBasis::FermiBasis(int ss, int ps) {
 
 	particles = ps;
 	sites = ss;
@@ -17,11 +17,11 @@ FermiBasis::FermiBasis(unsigned ss, unsigned ps) {
 
 	basisSize = getBasisSize(sites, particles);
 
-	basis = UnsignedMatrix::Zero(basisSize, sites);
+	basis = intMatrix::Zero(basisSize, sites);
 	populateBasisStates();
 }
 
-unsigned FermiBasis::getBasisSize(unsigned ss, unsigned ps) {
+int FermiBasis::getBasisSize(int ss, int ps) {
 	if (ps > ss)
 		return 0;
 	if (ps * 2 > ss)
@@ -39,9 +39,9 @@ unsigned FermiBasis::getBasisSize(unsigned ss, unsigned ps) {
 
 void FermiBasis::populateBasisStates(void) {
 
-	unsigned p[particles];
+	int p[particles];
 
-	for (unsigned i = 0; i < particles; ++i) {
+	for (int i = 0; i < particles; ++i) {
 		p[i] = i;
 	}
 
@@ -68,7 +68,7 @@ void FermiBasis::populateBasisStates(void) {
 
 }
 
-void FermiBasis::printBasisState(unsigned stateIndex) {
+void FermiBasis::printBasisState(int stateIndex) {
 
 	cout<< basis.row(stateIndex) << endl;
 

@@ -1,5 +1,8 @@
 
 #include <iostream>
+#include <fstream>
+#include <vector>
+#include "defs.hpp"
 #include "FermiBasis.hpp"
 #include "Hamiltonian.hpp"
 #include "Liouvillian.hpp"
@@ -14,75 +17,42 @@ int main(){
 
 
 
-Liouvillian * Liou = new Liouvillian(0.0, 1.0, 8, 4, 1.0, 1.0, 0.0);
+Liouvillian * Liou = new Liouvillian(0.0, 1.0, 15, 2, 1.0, 1.0);
 
 /*
 cout << "the Liouvillian is:" << endl;
 cout << Liou->W << endl << endl;
 */
 
-ContinuousTimeMonteCarlo * MC = new ContinuousTimeMonteCarlo(1,1000.0,Liou);
-
-/*
-
-cout << MC->state << endl;
+ContinuousTimeMonteCarlo * MC = new ContinuousTimeMonteCarlo(1,100000000,Liou);
 
 
-for (unsigned i=0; i<MC->jumpTimes.size(); i++){
-    cout << MC->jumpTimes[i] <<"  "<<MC->jumpStates[i] << endl;
-}
+JumpDistribution * Dist2 = new JumpDistribution(50.0, 40, 0, 150, MC);
 
-
-std::vector<double>::iterator itT=MC->jumpTimes.begin();
-std::vector<unsigned>::iterator itS=MC->jumpStates.begin();
-for ( ; itT < MC->jumpTimes.end(), itS < MC->jumpStates.end(); ++itT, ++itS ){
-    cout << *itT <<"  " << *itS <<endl;
-}
-*/
-
-JumpDistribution * Dist = new JumpDistribution(100.0, 20, 150, 350, MC);
-
-std::vector<double>::iterator itV=Dist->midPointValues.begin();
-std::vector<unsigned>::iterator itF=Dist->frequency.begin();
-for ( ; itF < Dist->frequency.end(), itV<Dist->midPointValues.end() ; 
-    ++itF, ++itV){
-        cout << *itV << "  " << *itF << endl;
-}
-
-
-
-MC->writeToFile("outputTest.dat");
-
-cout << "basisSize  " << MC->basisSize << endl;
-
-
-
-
-ContinuousTimeMonteCarlo * MC2 = new ContinuousTimeMonteCarlo ("outputTest.dat");
-
-
-JumpDistribution * Dist2 = new JumpDistribution(100.0, 20, 150, 350, MC2);
-
-itV=Dist2->midPointValues.begin();
-itF=Dist2->frequency.begin();
+std::vector<double>::iterator itV = Dist2->midPointValues.begin();
+std::vector<int>::iterator itF = Dist2->frequency.begin();
 for ( ; itF < Dist2->frequency.end(), itV<Dist2->midPointValues.end() ; 
-    ++itF, ++itV){
-        cout << *itV << "  " << *itF << endl;
+     ++itF, ++itV){
+    cout << *itV << "  " << *itF << endl;
 }
 
 
+std::ofstream histogramFile ("histogram5.dat");
 
-MC->writeToFile("outputTest2.dat");
+std::vector<int>::iterator itFreq = Dist2->frequency.begin();
+std::vector<double>::iterator itMpv = Dist2->midPointValues.begin();
+for ( ; itFreq < Dist2->frequency.end(), itMpv< Dist2->midPointValues.end();
+         ++itFreq, ++itMpv){
+    histogramFile << *itMpv << " " << *itFreq << endl;
+}
 
-cout << "basisSize  " << MC2->basisSize << endl;
-
-
+histogramFile.close();
 
 
 delete Dist2;
-delete Dist;
 delete MC;
 delete Liou;
+
 
 
 
