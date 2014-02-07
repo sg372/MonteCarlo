@@ -11,7 +11,7 @@
 #include "JumpDistribution.hpp"
 
 //Parameters to specify the quantum model
-#define SITES           15
+#define SITES           50
 #define PARTICLES       2
 #define TUNNELLING      1.0
 #define DISORDER_STR_1  1.0
@@ -25,10 +25,10 @@
 #define INIT_Q_STATE    1
 
 //Parameters to specify the histogramming of jump frequencies
-#define NO_OF_BINS      40
+#define NO_OF_BINS      50
 #define SAMPLING_TIME   50.0
 #define LOWER_BOUND     0.0
-#define UPPER_BOUND     150.0
+#define UPPER_BOUND     200.0
 
 //Filenames for output of histograms
 #define FNAME_1         "histogram_weak_disorder.dat"
@@ -39,75 +39,77 @@
 int main(){
 
 
-//Construct a weakly-disordered system and evolve it and histogram results
-Liouvillian * Liou = new Liouvillian(COUPLING_STR, SITES, PARTICLES,
-        TUNNELLING, DISORDER_STR_1);
+	//Construct a weakly-disordered system and evolve it and histogram results
+	Liouvillian * Liou = new Liouvillian(COUPLING_STR, SITES, PARTICLES,
+			TUNNELLING, DISORDER_STR_1);
 
-ContinuousTimeMonteCarlo * MC = new ContinuousTimeMonteCarlo(INIT_Q_STATE,
-        TIME_STEPS,Liou);
+	std::cout << "Quantum system has a basis size of " << Liou->basisSize << std::endl;
 
-JumpDistribution * Dist = new JumpDistribution(SAMPLING_TIME, NO_OF_BINS, 
-        LOWER_BOUND, UPPER_BOUND, MC);
+	ContinuousTimeMonteCarlo * MC = new ContinuousTimeMonteCarlo(INIT_Q_STATE,
+			TIME_STEPS,Liou);
 
-
-//Write the histogram to a file and to stdout
-std::cout << "Histogram data for the case of weak disorder:" << std::endl;
-std::cout << "JUMPS   FREQUENCY" << std::endl;
-
-std::ofstream histogramFile (FNAME_1);
-
-std::vector<int>::iterator itFreq = Dist->frequency.begin();
-std::vector<double>::iterator itMpv = Dist->midPointValues.begin();
-
-for ( ; itFreq < Dist->frequency.end(), itMpv< Dist->midPointValues.end();
-         ++itFreq, ++itMpv){
-
-    histogramFile << *itMpv << " " << *itFreq << std::endl;
-    std::cout  << *itMpv << " " << *itFreq << std::endl;
-
-}
-
-histogramFile.close();
-
-delete Dist;
-delete MC;
-delete Liou;
+	JumpDistribution * Dist = new JumpDistribution(SAMPLING_TIME, NO_OF_BINS,
+			LOWER_BOUND, UPPER_BOUND, MC);
 
 
-//Construct a strongly-disordered system and evolve it and histogram results
-Liou = new Liouvillian(COUPLING_STR, SITES, PARTICLES,
-        TUNNELLING, DISORDER_STR_2);
+	//Write the histogram to a file and to stdout
+	std::cout << "Histogram data for the case of weak disorder:" << std::endl;
+	std::cout << "JUMPS   FREQUENCY" << std::endl;
 
-MC = new ContinuousTimeMonteCarlo(INIT_Q_STATE,
-        TIME_STEPS,Liou);
+	std::ofstream histogramFile (FNAME_1);
 
-Dist = new JumpDistribution(SAMPLING_TIME, NO_OF_BINS, 
-        LOWER_BOUND, UPPER_BOUND, MC);
+	std::vector<int>::iterator itFreq = Dist->frequency.begin();
+	std::vector<double>::iterator itMpv = Dist->midPointValues.begin();
 
-//Write the histogram to a file and to stdout
-std::cout << "Histogram data for the case of strong disorder:" << std::endl;
-std::cout << "JUMPS   FREQUENCY" << std::endl;
+	for ( ; itFreq < Dist->frequency.end(), itMpv< Dist->midPointValues.end();
+			++itFreq, ++itMpv){
 
-histogramFile.open(FNAME_2);
+		histogramFile << *itMpv << " " << *itFreq << std::endl;
+		std::cout  << *itMpv << " " << *itFreq << std::endl;
 
-itFreq = Dist->frequency.begin();
-itMpv = Dist->midPointValues.begin();
+	}
 
-for ( ; itFreq < Dist->frequency.end(), itMpv< Dist->midPointValues.end();
-         ++itFreq, ++itMpv){
+	histogramFile.close();
 
-    histogramFile << *itMpv << " " << *itFreq << std::endl;
-    std::cout  << *itMpv << " " << *itFreq << std::endl;
-
-}
-
-histogramFile.close();
-
-delete Dist;
-delete MC;
-delete Liou;
+	delete Dist;
+	delete MC;
+	delete Liou;
 
 
-return 0;
+	//Construct a strongly-disordered system and evolve it and histogram results
+	Liou = new Liouvillian(COUPLING_STR, SITES, PARTICLES,
+			TUNNELLING, DISORDER_STR_2);
+
+	MC = new ContinuousTimeMonteCarlo(INIT_Q_STATE,
+			TIME_STEPS,Liou);
+
+	Dist = new JumpDistribution(SAMPLING_TIME, NO_OF_BINS,
+			LOWER_BOUND, UPPER_BOUND, MC);
+
+	//Write the histogram to a file and to stdout
+	std::cout << "Histogram data for the case of strong disorder:" << std::endl;
+	std::cout << "JUMPS   FREQUENCY" << std::endl;
+
+	histogramFile.open(FNAME_2);
+
+	itFreq = Dist->frequency.begin();
+	itMpv = Dist->midPointValues.begin();
+
+	for ( ; itFreq < Dist->frequency.end(), itMpv< Dist->midPointValues.end();
+			++itFreq, ++itMpv){
+
+		histogramFile << *itMpv << " " << *itFreq << std::endl;
+		std::cout  << *itMpv << " " << *itFreq << std::endl;
+
+	}
+
+	histogramFile.close();
+
+	delete Dist;
+	delete MC;
+	delete Liou;
+
+
+	return 0;
 
 }

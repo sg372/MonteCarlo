@@ -36,42 +36,43 @@ class Hamiltonian : public FermiBasis
 
 public:
 
-Hamiltonian(int, int, double, double);
+	Hamiltonian(int, int, double, double);
 
+	//Return an on-site energy or a DoubleVector of all energies
+	double getOnSiteEnergy(int);
 
+	DoubleVector getOnSiteEnergies();
 
-double getOnSiteEnergy(int);
+	/* Members for inspection of matrices or to
+	 * access model parameters */
+	double getHoppingIntegral();
 
-DoubleVector getOnSiteEnergies();
+	double getDisorderStrength();
 
-double getHoppingIntegral();
+	void printHMatrix();
 
-double getDisorderStrength();
-
-void printHMatrix();
-
-void printJMatrix();
+	void printJMatrix();
 
 
 private:
 
-DoubleMatrix JMatrix;
+	DoubleMatrix JMatrix;
 
-DoubleVector onSiteEnergies;
+	DoubleVector onSiteEnergies;
 
-double hoppingIntegral;
+	double hoppingIntegral;
 
-double disorderStrength;
+	double disorderStrength;
 
-void makeJMatrix();
+	void makeJMatrix();
 
-void makeOnSiteEnergies();
+	void makeOnSiteEnergies();
 
-void makeHamiltonian();
+	void makeHamiltonian();
 
 protected:
 
-DoubleMatrix HMatrix;
+	DoubleMatrix HMatrix;
 
 
 };

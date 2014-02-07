@@ -10,7 +10,7 @@ FermiBasis::FermiBasis(int ss, int ps) {
 	particles = ps;
 	sites = ss;
 
-    //Check the system is physical
+	//Check the system is physical
 	if (particles > sites || particles < 1 || sites <1) {
 		cout<< "Error: FermiBasis: more fermions than sites" << endl << endl;
 		throw "Error: more sites than particles";
@@ -23,8 +23,8 @@ FermiBasis::FermiBasis(int ss, int ps) {
 }
 
 int FermiBasis::getBasisSize(int ss, int ps) {
-    
-    //Calculate [ss Choose ps] in a stable way:
+
+	//Calculate [ss Choose ps] in a stable way:
 	if (ps > ss)
 		return 0;
 	if (ps * 2 > ss)
@@ -44,23 +44,24 @@ void FermiBasis::populateBasisStates(void) {
 
 	int p[particles]; //Contains the positions of the particles
 
-    //Initialise particles on the left of the lattice
+	//Initialise particles on the left of the lattice
 	for (int i = 0; i < particles; ++i) {
 		p[i] = i;
 	}
 
+	//Build all basis states, of which there are basisSize
 	for (int j = 0; j < basisSize; ++j) {
 
 		for (int i = 0; i < particles; ++i) {
-            //Put particles in basis state j
+			//Put particles in basis state j
 			basis(j, p[i]) = 1; 
 		}
 
-        //To determine if the particle can be iterated no further
+		//To determine if the particle can be iterated no further
 		int breaker = 0; 
 
-        /* To identify the next particle to moved, up to the leftmost
-         * particle, with shift=0 being the rightmost particle.*/
+		/* To identify the next particle to moved, up to the leftmost
+		 * particle, with shift=0 being the rightmost particle.*/
 		int shift = 0;   
 
 		while (breaker == 0 && shift < particles) {
@@ -71,8 +72,8 @@ void FermiBasis::populateBasisStates(void) {
 				}
 				breaker = 1; //particle can move no further
 			}
-            /* take the particle to the left and repeat until it is next to the
-             * last particle */
+			/* take the particle to the left and repeat until it is next to the
+			 * last particle */
 			shift += 1; 
 
 		}

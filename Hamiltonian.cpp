@@ -8,7 +8,7 @@
 #define endl std::endl 
 
 Hamiltonian::Hamiltonian(int ss, int ps, double J, double dis) :
-		FermiBasis(ss, ps) {
+FermiBasis(ss, ps) {
 
 	hoppingIntegral = J;
 	disorderStrength = dis;
@@ -29,6 +29,7 @@ Hamiltonian::Hamiltonian(int ss, int ps, double J, double dis) :
 inspection and return model parameters including the generated
 disorder realisation across the lattice */
 void Hamiltonian::printHMatrix() {
+
 	//Check that matrix is small (and so readily inspected)
 	if (basisSize < 40) {
 		cout<< HMatrix << endl;
@@ -47,11 +48,11 @@ double Hamiltonian::getOnSiteEnergy(int site) {
 }
 
 double Hamiltonian::getHoppingIntegral(){
-    return hoppingIntegral;
+	return hoppingIntegral;
 }
 
 double Hamiltonian::getDisorderStrength(){
-    return disorderStrength;
+	return disorderStrength;
 }
 
 DoubleVector Hamiltonian::getOnSiteEnergies() {
@@ -94,7 +95,7 @@ void Hamiltonian::makeHamiltonian() {
 			int breaker = 0;
 			int match[3] = { 0 };
 
-            //Check for two differences between states so that a hop can occur
+			//Check for two differences between states so that a hop can occur
 			while (breaker < 3 && s < sites) { 
 				if (basis(i, s) != basis(j, s)) {
 					match[breaker] = s;
@@ -103,14 +104,14 @@ void Hamiltonian::makeHamiltonian() {
 				s += 1;
 			}
 
-            //Populate elements if a flip can occur (two differences in states)
+			//Populate elements if a flip can occur (two differences in states)
 			if (s == sites && breaker == 2) {
 
-                //Check that we are moving a particle from a hole
+				//Check that we are moving a particle from a hole
 				if (basis(i, match[0]) == 0 && basis(i, match[1]) == 1
 						&& basis(j, match[0]) == 1 && basis(j, match[1]) == 0) {
 
-                    //Count positions to preserve Fermi commutation relations
+					//Count positions to preserve Fermi commutation relations
 					int sum1 = 0;
 					for (int m = 0; m < match[1]; ++m) {
 						sum1 = sum1 + basis(i, m);
@@ -124,9 +125,9 @@ void Hamiltonian::makeHamiltonian() {
 					int sgn = 2 * (sum1 + sum2) % 2 - 1;
 
 					HMatrix(i, j) = HMatrix(i, j)
-							+ JMatrix(match[0], match[1]) * sgn;
+									+ JMatrix(match[0], match[1]) * sgn;
 
-                //Repeat for moving a particle TO a hole
+					//Repeat for moving a particle TO a hole
 				} else if (basis(i, match[0]) == 1 && basis(i, match[1]) == 0
 						&& basis(j, match[0]) == 0 && basis(j, match[1]) == 1) {
 
@@ -143,14 +144,14 @@ void Hamiltonian::makeHamiltonian() {
 					int sgn = 2 * (sum1 + sum2) % 2 - 1;
 
 					HMatrix(i, j) = HMatrix(i, j)
-							+ JMatrix(match[0], match[1]) * sgn;
+									+ JMatrix(match[0], match[1]) * sgn;
 				}
 			}
 
 		}
 	}
 
-    // Add diagonal disorder energies 
+	// Add diagonal disorder energies
 	for (int i = 0; i < basisSize; ++i) {
 		for (int k = 0; k < sites; ++k) {
 			if (basis(i, k) == 1) {

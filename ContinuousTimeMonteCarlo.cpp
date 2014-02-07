@@ -17,56 +17,56 @@
 
 //Constructor to perform a fixed number of time steps
 ContinuousTimeMonteCarlo::ContinuousTimeMonteCarlo(int lS,
-    int tS, Liouvillian * stochasticMatrix)
+		int tS, Liouvillian * stochasticMatrix)
 {
 
-    initialState = lS;
-    timeSteps = tS;
-    state = initialState;
-    time = 0.0;
-    
-    this->basisSize = stochasticMatrix->basisSize;
-    this->W = &stochasticMatrix->W;
-    
-    //Perform required number of time steps
-    for (int j=0; j<timeSteps; ++j){
-        try{
-            timeStep();
-        }
-        catch (int error) {
-            cout << "Error: state " << error << " is disconnected never jump";
-            cout << " and will never jump" << endl;
-            break;
-        }
-    }
+	initialState = lS;
+	timeSteps = tS;
+	state = initialState;
+	time = 0.0;
+
+	this->basisSize = stochasticMatrix->basisSize;
+	this->W = &stochasticMatrix->W;
+
+	//Perform required number of time steps
+	for (int j=0; j<timeSteps; ++j){
+		try{
+			timeStep();
+		}
+		catch (int error) {
+			cout << "Error: state " << error << " is disconnected never jump";
+			cout << " and will never jump" << endl;
+			break;
+		}
+	}
 
 }
 
 
 //Constructor to iterate until a desired time has been reached
 ContinuousTimeMonteCarlo::ContinuousTimeMonteCarlo(int lS,
-    double mT, Liouvillian * stochasticMatrix)
+		double mT, Liouvillian * stochasticMatrix)
 {
 
-    initialState = lS;
-    maxTime = mT;
-    state = initialState;
-    time = 0.0;
-    
-    this->basisSize = stochasticMatrix->basisSize;
-    this->W = &stochasticMatrix->W;
-    
-    //Step until required time has been reached
-    while (time < maxTime){
-        try{
-            timeStep();
-        }
-        catch (int error) {
-            cout << "Error: state " << error << " is disconnected never jump";
-            cout << " and will never jump" << endl;
-            break;
-        }
-    }
+	initialState = lS;
+	maxTime = mT;
+	state = initialState;
+	time = 0.0;
+
+	this->basisSize = stochasticMatrix->basisSize;
+	this->W = &stochasticMatrix->W;
+
+	//Step until required time has been reached
+	while (time < maxTime){
+		try{
+			timeStep();
+		}
+		catch (int error) {
+			cout << "Error: state " << error << " is disconnected never jump";
+			cout << " and will never jump" << endl;
+			break;
+		}
+	}
 
 }
 
@@ -75,11 +75,11 @@ ContinuousTimeMonteCarlo::ContinuousTimeMonteCarlo(int lS,
 //Constructor to read in object data from a file
 ContinuousTimeMonteCarlo::ContinuousTimeMonteCarlo(std::string fname)
 {
-    readFromFile(fname);
+	readFromFile(fname);
 
-    initialState = *jumpStates.begin();
-    maxTime = *jumpTimes.end();
-    timeSteps = jumpTimes.size();
+	initialState = *jumpStates.begin();
+	maxTime = *jumpTimes.end();
+	timeSteps = jumpTimes.size();
 
 }
 
@@ -92,76 +92,76 @@ ContinuousTimeMonteCarlo::ContinuousTimeMonteCarlo(std::string fname)
  * infinitely-lived state, should one be prepared initially */
 void ContinuousTimeMonteCarlo::timeStep()
 {
-//static std::mt19937 generator(std::time(0));
-static std::default_random_engine generator(std::time(0));
-static std::uniform_real_distribution<double> flatDistribution(0.0,1.0);
+	//static std::mt19937 generator(std::time(0));
+	static std::default_random_engine generator(std::time(0));
+	static std::uniform_real_distribution<double> flatDistribution(0.0,1.0);
 
-std::vector<double> cumul(basisSize);	//table of cumulative rates 
+	std::vector<double> cumul(basisSize);	//table of cumulative rates
 
-    double cu=0.0;      //for cumulative probability weight
-    
-    for (int i=0; i<basisSize; ++i){
-	    if(i != state){
-	        cu += (*W)(i,state);
-	        cumul[i] = cu;
-        }
-	    else if(i == state){	//Exclude current state by not incrementing
-	        cumul[i] = cu;	//cumulative rate for this state
-	    }
-    }
+	double cu=0.0;      //for cumulative probability weight
 
-//Select random number in [0, max(cu))
-double u = flatDistribution(generator) * cu;	
+	for (int i=0; i<basisSize; ++i){
+		if(i != state){
+			cu += (*W)(i,state);
+			cumul[i] = cu;
+		}
+		else if(i == state){	//Exclude current state by not incrementing
+			cumul[i] = cu;	//cumulative rate for this state
+		}
+	}
 
-//Select new state from table cumul (binary search)
-state = std::distance(cumul.begin(),
-                          std::lower_bound(cumul.begin(), cumul.end(), u));
-    
-double random_number = 1.0-flatDistribution(generator);  //distributed in (0.0,1.0]
+	//Select random number in [0, max(cu))
+	double u = flatDistribution(generator) * cu;
+
+	//Select new state from table cumul (binary search)
+	state = std::distance(cumul.begin(),
+			std::lower_bound(cumul.begin(), cumul.end(), u));
+
+	double random_number = 1.0-flatDistribution(generator);  //distributed in (0.0,1.0]
 
 
-//Check state is not isolated and a jump will happen, else throw
-if ( -(*W)(state,state) < EPS ){
-    throw state;
-}
+	//Check state is not isolated and a jump will happen, else throw
+	if ( -(*W)(state,state) < EPS ){
+		throw state;
+	}
 
-//Increment time
-time += log(random_number)/ (*W)(state,state);
+	//Increment time
+	time += log(random_number)/ (*W)(state,state);
 
-//Record time and corresponding new state;
-jumpTimes.push_back(time);
-jumpStates.push_back(state);										 
-					
+	//Record time and corresponding new state;
+	jumpTimes.push_back(time);
+	jumpStates.push_back(state);
+
 }
 
 
 //Write data to file with gnuplot-commented header lines
 void ContinuousTimeMonteCarlo::writeToFile(std::string fname){
 
-std::ofstream file (fname);
+	std::ofstream file (fname);
 
-if (file.is_open() ){
-    
-    file << "#ContinuousTimeMonteCarlo" << endl;
-    file << "#" << basisSize << endl;
-    file << "#" << jumpTimes.size() << endl;
+	if (file.is_open() ){
+
+		file << "#ContinuousTimeMonteCarlo" << endl;
+		file << "#" << basisSize << endl;
+		file << "#" << jumpTimes.size() << endl;
 
 
-    std::vector<double>::iterator itT = jumpTimes.begin();
-    std::vector<int>::iterator itS = jumpStates.begin();
+		std::vector<double>::iterator itT = jumpTimes.begin();
+		std::vector<int>::iterator itS = jumpStates.begin();
 
-    for ( ; itT < jumpTimes.end(), itS < jumpStates.end(); ++itT, ++itS){
+		for ( ; itT < jumpTimes.end(), itS < jumpStates.end(); ++itT, ++itS){
 
-        file << *itT << " "<< *itS << endl;
+			file << *itT << " "<< *itS << endl;
 
-    }
-}
-else {
-    cout << "File open unsuccessful. ";
-    cout << " Monte Carlo data not written to file." << endl;
-}
+		}
+	}
+	else {
+		cout << "File open unsuccessful. ";
+		cout << " Monte Carlo data not written to file." << endl;
+	}
 
-file.close(); 
+	file.close();
 
 }
 
@@ -170,38 +170,38 @@ file.close();
 //Read in a previously written out dataset
 void ContinuousTimeMonteCarlo::readFromFile(std::string fname){
 
-char dummyhash;
-int sizeOfVectors;
-std::string checkstring;
-std::ifstream file (fname);
+	char dummyhash;
+	int sizeOfVectors;
+	std::string checkstring;
+	std::ifstream file (fname);
 
 
-if (file.is_open() ){
+	if (file.is_open() ){
 
-    file >> checkstring;
+		file >> checkstring;
 
-    if ( checkstring.compare("#ContinuousTimeMonteCarlo")==0 ){
-        
-        file >> dummyhash >> basisSize;
-        file >> dummyhash >> sizeOfVectors;
+		if ( checkstring.compare("#ContinuousTimeMonteCarlo")==0 ){
 
-        jumpTimes.resize(sizeOfVectors);
-        jumpStates.resize(sizeOfVectors);
-        
-        std::vector<double>::iterator itT = jumpTimes.begin();
-        std::vector<int>::iterator itS = jumpStates.begin();
+			file >> dummyhash >> basisSize;
+			file >> dummyhash >> sizeOfVectors;
 
-        for ( ; itT < jumpTimes.end(), itS < jumpStates.end(); ++itT, ++itS){
+			jumpTimes.resize(sizeOfVectors);
+			jumpStates.resize(sizeOfVectors);
 
-            file >> *itT >> *itS;
+			std::vector<double>::iterator itT = jumpTimes.begin();
+			std::vector<int>::iterator itS = jumpStates.begin();
 
-        }
+			for ( ; itT < jumpTimes.end(), itS < jumpStates.end(); ++itT, ++itS){
 
-    }
-    else cout << "File does not contain ContinousTimeMonteCarlo data" << endl;
+				file >> *itT >> *itS;
 
-}
-else cout << "File open unsuccessful" << endl;
+			}
+
+		}
+		else cout << "File does not contain ContinousTimeMonteCarlo data" << endl;
+
+	}
+	else cout << "File open unsuccessful" << endl;
 
 
 

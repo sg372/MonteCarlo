@@ -21,9 +21,9 @@ Liouvillian::Liouvillian(double cs, int ss, int ps,
 
 	makeCouplingParameters();
 
-    /* Find eigenvalues and eigenvectors by creating a
-     * SelfAdjointEigenSolver object from the eigen 
-     * package */
+	/* Find eigenvalues and eigenvectors by creating a
+	 * SelfAdjointEigenSolver object from the eigen
+	 * package */
 	eigenSystem = SelfAdjointEigenSolver<DoubleMatrix>(HMatrix);
 
 	makeLiouvillian();
@@ -54,8 +54,8 @@ void Liouvillian::makeLiouvillian() {
 
 				W(eig_i, eig_j) += pow(
 						eigenSystem.eigenvectors()(basis_k, eig_i)
-								* eigenSystem.eigenvectors()(basis_k, eig_j)
-								* couplingParameters(basis_k), 2)
+						* eigenSystem.eigenvectors()(basis_k, eig_j)
+						* couplingParameters(basis_k), 2)
 						* couplingStrength
 						* (eigenSystem.eigenvalues()(eig_i)
 								- eigenSystem.eigenvalues()(eig_j));

@@ -35,22 +35,22 @@ class JumpDistribution{
 
 public:
 
-JumpDistribution( double, int, double, double, ContinuousTimeMonteCarlo *);
+	JumpDistribution( double, int, double, double, ContinuousTimeMonteCarlo *);
 
 
-double interval;
-int bins;
-double range[2];
-double binWidth;
+	double interval;
+	int bins;
+	double range[2];
+	double binWidth;
 
-ContinuousTimeMonteCarlo * MonteCarloObjectPtr;
+	ContinuousTimeMonteCarlo * MonteCarloObjectPtr;
 
-std::vector<double> midPointValues;
-std::vector<int> frequency;
+	std::vector<double> midPointValues;
+	std::vector<int> frequency;
 
 private:
 
-void makeDistribution();
+	void makeDistribution();
 
 
 };

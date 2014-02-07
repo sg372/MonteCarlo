@@ -38,32 +38,32 @@ class Liouvillian : public Hamiltonian
 
 public:
 
-Liouvillian(double, int, int, double, double, double s_val=0.0);
+	Liouvillian(double, int, int, double, double, double s_val=0.0);
 
-DoubleMatrix W;
+	DoubleMatrix W;
 
-/* Methods for finding and changing "s" in an
- * s-biased master equation.  Currently for
- * future use only when exact diagonalisation of
- * an s-generalised Liouvillian is implemented 
- * and a full redefinition of W would be costly */
-void resetSValue(double);
+	/* Methods for finding and changing "s" in an
+	 * s-biased master equation.  Currently for
+	 * future use only when exact diagonalisation of
+	 * an s-generalised Liouvillian is implemented
+	 * and a full redefinition of W would be costly */
+	void resetSValue(double);
 
-double getSValue();
+	double getSValue();
 
 private:
 
-double s;
+	double s;
 
-SelfAdjointEigenSolver<DoubleMatrix> eigenSystem;
+	SelfAdjointEigenSolver<DoubleMatrix> eigenSystem;
 
-void makeLiouvillian();
+	void makeLiouvillian();
 
-void makeCouplingParameters();
+	void makeCouplingParameters();
 
-double couplingStrength;
+	double couplingStrength;
 
-DoubleVector couplingParameters;
+	DoubleVector couplingParameters;
 
 };
 
